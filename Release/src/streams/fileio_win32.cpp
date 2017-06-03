@@ -878,7 +878,7 @@ size_t __cdecl _seekrdtoend_fsb(_In_ streams::details::_file_info *info, int64_t
 
     auto newpos = SetFilePointer(fInfo->m_handle, (LONG)(offset*char_size), nullptr, FILE_END);
 
-	if (newpos == INVALID_SET_FILE_POINTER) return (size_t)-1;
+    if (newpos == INVALID_SET_FILE_POINTER) return (size_t)-1;
 
     fInfo->m_rdpos = static_cast<size_t>(newpos) / char_size;
 
