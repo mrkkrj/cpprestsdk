@@ -878,27 +878,7 @@ size_t __cdecl _seekrdtoend_fsb(_In_ streams::details::_file_info *info, int64_t
 
     auto newpos = SetFilePointer(fInfo->m_handle, (LONG)(offset*char_size), nullptr, FILE_END);
 
-	if ((newpos == INVALID_SET_FILE_POINTER) && (GetLastError() != NO_ERROR))
-	{
-		// support files > 4 GB!
-#ifndef _WIN64
-		// OPEN TODO::: generic case when size_t isn't 64 bit? 
-		return (size_t)-1;
-#else
-		// fallback, only with x64 builds!
-		LARGE_INTEGER newpos_long;
-		LARGE_INTEGER offset_long;
-		offset_long.QuadPart = offset*char_size;
-
-		assert(sizeof(fInfo->m_rdpos) == sizeof(offset_long.QuadPart));
-
-		if (!SetFilePointerEx(fInfo->m_handle, offset_long, &newpos_long, FILE_END)) return (size_t)-1;
-
-		fInfo->m_rdpos = (size_t)newpos_long.QuadPart / char_size;
-
-		return fInfo->m_rdpos;
-#endif
-	}
+	if (newpos == INVALID_SET_FILE_POINTER) return (size_t)-1;
 
     fInfo->m_rdpos = static_cast<size_t>(newpos) / char_size;
 
